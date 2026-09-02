@@ -1,5 +1,5 @@
 import React from "react";
-import { BarChart3, Library, Search, Calendar, Plus, Trash2, Download, Activity, Send, Mail, CheckSquare, Share, Star, CircleUser, Settings, ChevronDown, ChevronUp, Bot, ChevronsLeft, GripVertical, X, RefreshCcw, Save, FileText, Pencil } from "lucide-react";
+import { BarChart3, Library, Search, Calendar, Plus, Trash2, Download, Activity, Send, Mail, CheckSquare, Share, Star, CircleUser, Settings, ChevronDown, ChevronUp, Bot, ChevronsLeft, GripVertical, X, RefreshCcw, Save, FileText, Pencil, HelpCircle } from "lucide-react";
 import { PrecalcDrawer } from "./PrecalcDrawer";
 import { PrecalcQuotaCard } from "./PrecalcQuotaCard";
 import {
@@ -251,6 +251,7 @@ const KnowledgePanel: React.FC<KnowledgePanelProps> = ({
       adoptRate: '61%',
       runEnabled: true,
       selectEnabled: true,
+      cacheEnabled: true,
     },
     {
       id: '2',
@@ -269,6 +270,7 @@ const KnowledgePanel: React.FC<KnowledgePanelProps> = ({
       adoptRate: '—',
       runEnabled: true,
       selectEnabled: false,
+      cacheEnabled: true,
     },
     {
       id: '3',
@@ -288,6 +290,7 @@ const KnowledgePanel: React.FC<KnowledgePanelProps> = ({
       adoptRate: '52%',
       runEnabled: true,
       selectEnabled: false,
+      cacheEnabled: false,
     },
     {
       id: '4',
@@ -306,6 +309,7 @@ const KnowledgePanel: React.FC<KnowledgePanelProps> = ({
       adoptRate: '58%',
       runEnabled: false,
       selectEnabled: false,
+      cacheEnabled: true,
     },
     {
       id: '5',
@@ -325,6 +329,7 @@ const KnowledgePanel: React.FC<KnowledgePanelProps> = ({
       adoptRate: '—',
       runEnabled: false,
       selectEnabled: false,
+      cacheEnabled: true,
     }
   ]);
 
@@ -1373,28 +1378,48 @@ const KnowledgePanel: React.FC<KnowledgePanelProps> = ({
              {isPrecalcConfigured ? (
                <>
                  <PrecalcQuotaCard showBranch={false} />
-                 <div className="bg-white border border-indigo-100 rounded-xl p-4 flex items-center justify-between shadow-sm">
-                   <div className="flex items-center gap-3">
-                     <div className="w-10 h-10 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600">
-                       <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                       </svg>
+                 <div className="bg-white border border-indigo-100 rounded-xl p-4 flex flex-col gap-3 shadow-sm">
+                   <div className="flex items-center justify-between">
+                     <div className="flex items-center gap-3">
+                       <div className="w-10 h-10 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600">
+                         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                         </svg>
+                       </div>
+                       <div>
+                         <h4 className="text-[13px] font-bold text-slate-800">预计算任务已开启</h4>
+                         <p className="text-[11px] text-slate-500">本智能体已配置预计算规则</p>
+                       </div>
                      </div>
-                     <div>
-                       <h4 className="text-[13px] font-bold text-slate-800">预计算任务已开启</h4>
-                       <p className="text-[11px] text-slate-500">本智能体已配置预计算规则</p>
+                     <button 
+                       onClick={() => setPrecalcDrawerOpen(true)}
+                       className="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-[12px] font-bold rounded-lg transition-all shadow-md shadow-indigo-100 active:scale-95 flex items-center gap-1.5"
+                     >
+                       <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                       </svg>
+                       配置
+                     </button>
+                   </div>
+                   
+                   <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
+                     <div className="flex items-center gap-1.5">
+                       <span className="text-[11px] font-medium text-slate-600">优先展示预计算缓存结果</span>
+                       <div className="group relative">
+                         <HelpCircle className="w-3.5 h-3.5 text-slate-400 cursor-help" />
+                         <div className="absolute bottom-full left-0 mb-2 w-[240px] p-2 bg-slate-800 text-white text-[10px] rounded shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-20 pointer-events-none leading-relaxed">
+                           开启后，若命中 30 天内的历史预计算数据将直接展示（响应速度快）。若您修改了智能体提示词，建议关闭此项以强制模型实时生成最新内容。
+                         </div>
+                       </div>
+                     </div>
+                     <div 
+                       onClick={() => onUpdateConfig({ ...config, globalCacheEnabled: config.globalCacheEnabled === false ? true : false })}
+                       className={`w-[34px] h-[18px] rounded-[9px] relative cursor-pointer transition-colors ${config.globalCacheEnabled !== false ? 'bg-indigo-600' : 'bg-slate-300'}`}
+                     >
+                       <div className={`absolute w-[14px] h-[14px] rounded-full bg-white top-[2px] shadow-sm transition-all duration-200 ${config.globalCacheEnabled !== false ? 'left-[18px]' : 'left-[2px]'}`}></div>
                      </div>
                    </div>
-                   <button 
-                     onClick={() => setPrecalcDrawerOpen(true)}
-                     className="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-[12px] font-bold rounded-lg transition-all shadow-md shadow-indigo-100 active:scale-95 flex items-center gap-1.5"
-                   >
-                     <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                     </svg>
-                     配置
-                   </button>
                  </div>
                </>
              ) : (

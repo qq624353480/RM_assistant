@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Cpu, UserCircle, Gauge, Landmark, Bot, ArrowRight,
-  ListCheck, Plus, Lightbulb, ExternalLink, Building, Check, Lock, Save, Trash2, Edit2
+  ListCheck, Plus, Lightbulb, ExternalLink, Building, Check, Lock, Save, Trash2, Edit2, HelpCircle
 } from 'lucide-react';
 import { PrecalcQuotaCard } from './PrecalcQuotaCard';
 
@@ -18,6 +18,7 @@ export const PrecalcDrawer: React.FC<PrecalcDrawerProps> = ({ isOpen, onClose, i
   const [isAdding, setIsAdding] = useState(false);
   const [newQuestion, setNewQuestion] = useState('');
   const [newScope, setNewScope] = useState('');
+  const [cacheEnabled, setCacheEnabled] = useState(true);
   const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
 
   const handleSaveAdd = () => {
@@ -40,11 +41,13 @@ export const PrecalcDrawer: React.FC<PrecalcDrawerProps> = ({ isOpen, onClose, i
       adoptRate: '—',
       runEnabled: true,
       selectEnabled: false,
+      cacheEnabled: cacheEnabled,
     };
     setTasks([newTask, ...tasks]);
     setIsAdding(false);
     setNewQuestion('');
     setNewScope('');
+    setCacheEnabled(true);
   };
 
   const handleSaveEdit = (id: string, updatedQuestion: string, updatedScope: string) => {
@@ -67,7 +70,7 @@ export const PrecalcDrawer: React.FC<PrecalcDrawerProps> = ({ isOpen, onClose, i
       />
       
       {/* Drawer Content */}
-      <div className="relative w-full max-w-[1320px] bg-[#F2F3F5] h-full shadow-2xl flex flex-col animate-in slide-in-from-right duration-300 border-l border-slate-200">
+      <div className="relative w-full max-w-[1360px] bg-[#F2F3F5] h-full shadow-2xl flex flex-col animate-in slide-in-from-right duration-300 border-l border-slate-200">
         
         {/* Header */}
         <div className="bg-white px-6 py-4 border-b border-slate-200 flex justify-between items-center shadow-sm z-10 shrink-0">

@@ -1,5 +1,8 @@
 {
   "name": "Remix: RM小助运营平台 - 银行智能体管理系统",
   "description": "一个复刻银行内部使用的AI智能体管理平台，包含智能体列表展示、多维度筛选以及深度定制的新建智能体工作流界面。",
-  "requestFramePermissions": []
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
 }

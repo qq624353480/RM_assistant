@@ -75,6 +75,7 @@ export interface AgentConfig {
   instructions: string;
   routerSystemPrompt?: string;
   summaryPrompt?: string;
+  globalCacheEnabled?: boolean;
   associatedItems?: AssociatedItem[];
   placementLogic?: 'AND' | 'OR';
   model?: string;
