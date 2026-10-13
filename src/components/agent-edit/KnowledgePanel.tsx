@@ -1,7 +1,8 @@
 import React from "react";
-import { BarChart3, Library, Search, Calendar, Plus, Trash2, Download, Activity, Send, Mail, CheckSquare, Share, Star, CircleUser, Settings, ChevronDown, ChevronUp, Bot, ChevronsLeft, GripVertical, X, RefreshCcw, Save, FileText, Pencil, HelpCircle } from "lucide-react";
+import { BarChart3, Library, Search, Calendar, Plus, Trash2, Download, Activity, Send, Mail, CheckSquare, Share, Star, CircleUser, Settings, ChevronDown, ChevronUp, Bot, ChevronsLeft, GripVertical, X, RefreshCcw, Save, FileText, Pencil, HelpCircle, Eye, Layers, Info, Check, Sparkles } from "lucide-react";
 import { PrecalcDrawer } from "./PrecalcDrawer";
 import { PrecalcQuotaCard } from "./PrecalcQuotaCard";
+import { PlacementPreviewModal } from "./PlacementPreviewModal";
 import {
   FileItem,
   DataField,
@@ -341,6 +342,7 @@ const KnowledgePanel: React.FC<KnowledgePanelProps> = ({
 
   const [searchQuery, setSearchQuery] = React.useState("");
   const [isSearching, setIsSearching] = React.useState(false);
+  const [isPlacementPreviewOpen, setIsPlacementPreviewOpen] = React.useState(false);
   const [searchTab, setSearchTab] = React.useState<
     "专案数据库" | "重要商机MOT" | "客户标签" | "保险拓客平台" | "业绩中心"
   >("专案数据库");
@@ -1302,6 +1304,62 @@ const KnowledgePanel: React.FC<KnowledgePanelProps> = ({
 
         {envSubTab === "transaction" ? (
           <div className="space-y-4">
+            {/* 单命中仅展示投放卡片开关（精简单行，高度不占空间） */}
+            <div className="flex items-center justify-between px-3.5 py-2.5 bg-slate-50/90 border border-slate-200/80 rounded-xl hover:border-slate-300 transition-colors">
+              <div className="flex items-center gap-2">
+                <span className="text-[12px] font-bold text-slate-700">仅展示投放卡片</span>
+                
+                {/* 效果说明 hover 显示 */}
+                <div className="group relative flex items-center">
+                  <HelpCircle className="w-3.5 h-3.5 text-slate-400 hover:text-slate-600 cursor-help transition-colors" />
+                  <div className="absolute left-0 bottom-full mb-2 w-72 p-3 bg-slate-900 text-white text-[11px] rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-30 pointer-events-none leading-relaxed border border-slate-700/60">
+                    <div className="font-bold text-slate-100 mb-1 flex items-center gap-1.5 pb-1 border-b border-slate-800">
+                      <span>💡 仅展示投放卡片</span>
+                    </div>
+                    <div className="space-y-1.5 text-slate-300">
+                      <p>
+                        开启后，客户命中 1 个自动触发规则时，以<strong>「投放卡片」</strong>（智能体简介+推荐理由）形式快速展示，客户经理点击【查看完整回复】后再展开详细建议，样式可查看右侧「效果预览」。
+                      </p>
+                      <div className="pt-1.5 border-t border-slate-800 text-[10px] text-amber-300/90 leading-normal">
+                        注：若命中多个策略，系统默认统一展示卡片列表。
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 效果预览链接 */}
+                <button
+                  type="button"
+                  onClick={() => setIsPlacementPreviewOpen(true)}
+                  className="text-[11px] text-indigo-600 hover:text-indigo-700 hover:underline flex items-center gap-0.5 ml-1 font-medium transition-colors"
+                >
+                  <Eye className="w-3 h-3" />
+                  效果预览
+                </button>
+              </div>
+
+              {/* 开关 Switch */}
+              <button
+                type="button"
+                role="switch"
+                aria-checked={config.singleHitDisplayMode === 'summary'}
+                onClick={() => onUpdateConfig({
+                  ...config,
+                  singleHitDisplayMode: config.singleHitDisplayMode === 'summary' ? 'full' : 'summary'
+                })}
+                className={`w-9 h-5 rounded-full transition-colors relative p-0.5 outline-none cursor-pointer ${
+                  config.singleHitDisplayMode === 'summary' ? 'bg-indigo-600' : 'bg-slate-300'
+                }`}
+                title={config.singleHitDisplayMode === 'summary' ? '已开启：仅展示投放卡片' : '已关闭：直接输出全文'}
+              >
+                <div
+                  className={`w-4 h-4 rounded-full bg-white shadow-xs transition-transform ${
+                    config.singleHitDisplayMode === 'summary' ? 'translate-x-4' : 'translate-x-0'
+                  }`}
+                />
+              </button>
+            </div>
+
             {renderSearchAndAssociate()}
             <div className="flex items-center gap-2 mb-1">
               <div className="w-1 h-3 bg-indigo-500 rounded-full"></div>
@@ -1938,6 +1996,12 @@ const KnowledgePanel: React.FC<KnowledgePanelProps> = ({
         isConfigured={isPrecalcConfigured}
         tasks={tasks}
         setTasks={setTasks}
+      />
+
+      <PlacementPreviewModal
+        isOpen={isPlacementPreviewOpen}
+        onClose={() => setIsPlacementPreviewOpen(false)}
+        config={config}
       />
     </div>
   );

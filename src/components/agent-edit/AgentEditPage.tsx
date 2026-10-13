@@ -343,6 +343,7 @@ const AgentEditPage: React.FC<AgentEditPageProps> = ({ agentId, agentName, onBac
             onCustomerChange={setSelectedCustomerId}
             isProcessing={isProcessing}
             onShowReport={() => setIsReportModalOpen(true)}
+            config={agentConfig}
           />
         </div>
       </div>

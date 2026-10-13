@@ -83,6 +83,7 @@ export interface AgentConfig {
   maxTokens?: number;
   searchGrounding?: boolean;
   isExcellenceCase?: boolean;
+  singleHitDisplayMode?: 'full' | 'summary';
 }
 
 export interface DataField {

@@ -64,7 +64,8 @@ export const INITIAL_CONFIG: AgentConfig = {
       isConfiguredInInsight: false,
       selectedValues: ['强']
     }
-  ]
+  ],
+  singleHitDisplayMode: 'full'
 };
 
 export const MOCK_FILES: FileItem[] = [

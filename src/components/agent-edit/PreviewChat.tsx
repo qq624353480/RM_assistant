@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChatMessage, MockCustomer, TraceStep } from '../../../types';
+import { ChatMessage, MockCustomer, TraceStep, AgentConfig } from '../../../types';
 import { 
   SendIcon, BotAvatar, CheckCircleIcon, 
   LoaderIcon, ChevronDownIcon, ChevronUpIcon,
@@ -14,6 +14,7 @@ interface PreviewChatProps {
   onCustomerChange: (id: string) => void;
   isProcessing: boolean;
   onShowReport?: () => void;
+  config?: AgentConfig;
 }
 
 const PreviewChat: React.FC<PreviewChatProps> = ({
@@ -23,10 +24,12 @@ const PreviewChat: React.FC<PreviewChatProps> = ({
   selectedCustomerId,
   onCustomerChange,
   isProcessing,
-  onShowReport
+  onShowReport,
+  config
 }) => {
   const [input, setInput] = React.useState('');
   const [expandedTrace, setExpandedTrace] = React.useState<Record<string, boolean>>({});
+  const [expandedPlacementCards, setExpandedPlacementCards] = React.useState<Record<string, boolean>>({});
   const [selectedModel, setSelectedModel] = React.useState('qwen3-32b');
   const [isDeepThink, setIsDeepThink] = React.useState(false);
   const [showDataWarning, setShowDataWarning] = React.useState(true);
@@ -157,17 +160,72 @@ const PreviewChat: React.FC<PreviewChatProps> = ({
                       命中客群：{msg.marketingInfo.hitSegment} <span className="mx-1 opacity-30">|</span> 建议触发：{msg.marketingInfo.recommendedAgent}
                     </span>
                   </div>
+                  {config?.singleHitDisplayMode === 'summary' && (
+                    <span className="text-[9px] bg-amber-50 text-amber-700 border border-amber-200 px-1.5 py-0.2 rounded font-medium">
+                      简介卡片折叠输出
+                    </span>
+                  )}
                 </div>
               )}
 
-              {/* Main Content */}
-              <div className={`p-3 rounded-2xl text-sm leading-relaxed shadow-sm relative ${
-                msg.role === 'user' 
-                  ? 'bg-blue-600 text-white rounded-tr-none' 
-                  : 'bg-gray-100 text-gray-800 rounded-tl-none border border-gray-200'
-              }`}>
-                {msg.content}
-              </div>
+              {/* Placement Card (When singleHitDisplayMode === 'summary' and marketingInfo exists) */}
+              {msg.role === 'assistant' && msg.marketingInfo && config?.singleHitDisplayMode === 'summary' ? (
+                <div className="bg-white border border-indigo-200/80 rounded-2xl rounded-tl-none p-3.5 shadow-sm space-y-2.5">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-[10px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-100 px-1.5 py-0.5 rounded">
+                        智能体投放卡片
+                      </span>
+                      <span className="text-xs font-bold text-slate-800">
+                        {config?.name || '全能财富顾问助手'}
+                      </span>
+                    </div>
+                    <span className="text-[10px] text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full font-medium">
+                      单命中·卡片模式
+                    </span>
+                  </div>
+
+                  <p className="text-[11px] text-slate-600 leading-relaxed">
+                    <span className="font-semibold text-slate-700">简介：</span>
+                    {config?.description || '基于SOP预检逻辑，智能识别客户分层与持仓合规，提供对客建议。'}
+                  </p>
+
+                  <div className="p-2 bg-amber-50/70 border border-amber-200/60 rounded-lg text-[11px] text-amber-800 flex items-start gap-1.5">
+                    <span className="font-bold shrink-0">推荐理由：</span>
+                    <span>命中客群「{msg.marketingInfo.hitSegment}」，系统建议触发「{msg.marketingInfo.recommendedAgent}」</span>
+                  </div>
+
+                  <div className="pt-1.5 border-t border-slate-100 flex items-center justify-between">
+                    <span className="text-[10px] text-slate-400">调用智能体流式输出完整回复</span>
+                    <button
+                      type="button"
+                      onClick={() => setExpandedPlacementCards(prev => ({ ...prev, [msg.id]: !prev[msg.id] }))}
+                      className="px-2.5 py-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-bold transition-all shadow-sm flex items-center gap-1"
+                    >
+                      {expandedPlacementCards[msg.id] ? (
+                        <>收起完整回复 <ChevronUpIcon className="w-3.5 h-3.5" /></>
+                      ) : (
+                        <>查看完整回复 <ChevronDownIcon className="w-3.5 h-3.5" /></>
+                      )}
+                    </button>
+                  </div>
+
+                  {expandedPlacementCards[msg.id] && (
+                    <div className="pt-2 border-t border-slate-100 animate-in fade-in duration-200 text-sm leading-relaxed text-slate-800 bg-slate-50/70 p-3 rounded-xl border border-slate-200/60">
+                      {msg.content}
+                    </div>
+                  )}
+                </div>
+              ) : (
+                /* Main Content */
+                <div className={`p-3 rounded-2xl text-sm leading-relaxed shadow-sm relative ${
+                  msg.role === 'user' 
+                    ? 'bg-blue-600 text-white rounded-tr-none' 
+                    : 'bg-gray-100 text-gray-800 rounded-tl-none border border-gray-200'
+                }`}>
+                  {msg.content}
+                </div>
+              )}
 
               {/* Combined AI Data Efficiency & Truncation Diagnosis */}
               {msg.role === 'assistant' && (showDataWarning || selectedModel !== 'cmb-model') && msg.content.includes('告警') && (
